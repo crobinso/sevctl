@@ -3,6 +3,7 @@
 #![allow(dead_code)]
 
 pub mod build;
+pub mod show;
 
 use super::*;
 
@@ -13,11 +14,12 @@ use uuid::Uuid;
 #[derive(StructOpt)]
 pub enum VmsaCmd {
     Build(build::CmdArgs),
+    Show(show::CmdArgs),
 }
 
 // Linux struct vmcb_seg (arch/x86/include/asm/svm.h)
 #[repr(C, packed)]
-#[derive(Default)]
+#[derive(Copy, Clone, Debug, Default)]
 pub struct VmcbSegment {
     selector: u16,
     attrib: u16,
@@ -77,6 +79,7 @@ const ATTR_E_MASK: u16 = 1 << ATTR_E_SHIFT;
 const ATTR_W_MASK: u16 = 1 << ATTR_W_SHIFT;
 
 // Linux struct vmcb_save_area (arch/x86/include/asm/svm.h)
+#[derive(Copy, Clone, Debug)]
 #[repr(C, packed)]
 pub struct Vmsa {
     es: VmcbSegment,
