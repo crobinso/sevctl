@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
+#![allow(dead_code)]
+
 pub mod build;
 
 use super::*;
@@ -25,17 +27,17 @@ pub struct VmcbSegment {
 
 #[derive(Default)]
 pub struct Ovmf {
-    entries: Vec<String>, /* XXX: what is the type of this vector? */
+    _entries: Vec<String>, /* XXX: what is the type of this vector? */
 }
 
 impl Ovmf {
     fn load(&self, firmware: PathBuf) -> Result<()> {
-        let bytes = fs::read(firmware).context("error reading from firmware path file")?;
+        let _bytes = fs::read(firmware).context("error reading from firmware path file")?;
 
         let ovmf_table_footer_guid = Uuid::parse_str("96b582de-1fb2-45f7-baea-a366c55a082d")
             .context("error parsing uuid of OVMF_TABLE_FOOTER_GUID")?;
 
-        let expect = ovmf_table_footer_guid.to_u128_le();
+        let _expect = ovmf_table_footer_guid.to_u128_le();
 
         Ok(())
     }
@@ -232,7 +234,7 @@ impl Vmsa {
     }
 
     // Based on logic in x86_cpu_reset() (target/i386/cpu.c)
-    fn init_qemu(&mut self, cpu: u64) {
+    fn init_qemu(&mut self, _cpu: u64) {
         self.ldtr.attrib = (ATTR_P_MASK | (2 << ATTR_TYPE_SHIFT)) >> ATTR_TYPE_SHIFT;
         self.tr.attrib = (ATTR_P_MASK | (11 << ATTR_TYPE_SHIFT)) >> ATTR_TYPE_SHIFT;
         self.cs.attrib = (ATTR_P_MASK | ATTR_S_MASK | ATTR_CS_MASK | ATTR_R_MASK | ATTR_A_MASK)

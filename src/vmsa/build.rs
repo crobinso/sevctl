@@ -79,8 +79,8 @@ pub fn cmd(args: CmdArgs) -> super::Result<()> {
     }
 
     if let Some(fw) = args.firmware {
-        let ovmf = Ovmf::default();
-        let ovmf = ovmf.load(fw);
+        let _ovmf = Ovmf::default();
+        let _ovmf = _ovmf.load(fw);
     }
 
     Ok(())
