@@ -5,6 +5,8 @@
 pub mod build;
 pub mod show;
 
+use serde::{Deserialize,Serialize};
+
 use super::*;
 
 use std::fs;
@@ -19,7 +21,7 @@ pub enum VmsaCmd {
 
 // Linux struct vmcb_seg (arch/x86/include/asm/svm.h)
 #[repr(C, packed)]
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct VmcbSegment {
     selector: u16,
     attrib: u16,
@@ -78,8 +80,10 @@ const ATTR_R_MASK: u16 = 1 << ATTR_R_SHIFT;
 const ATTR_E_MASK: u16 = 1 << ATTR_E_SHIFT;
 const ATTR_W_MASK: u16 = 1 << ATTR_W_SHIFT;
 
+use serde_big_array::BigArray;
+
 // Linux struct vmcb_save_area (arch/x86/include/asm/svm.h)
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[repr(C, packed)]
 pub struct Vmsa {
     es: VmcbSegment,
@@ -92,10 +96,12 @@ pub struct Vmsa {
     ldtr: VmcbSegment,
     idtr: VmcbSegment,
     tr: VmcbSegment,
+    #[serde(with = "BigArray")]
     rsvd1: [u8; 43],
     cpl: u8,
     rsvd2: [u8; 4],
     efer: u64,
+    #[serde(with = "BigArray")]
     rsvd3: [u8; 104],
     xss: u64, /* Valid for SEV-ES only */
     cr4: u64,
@@ -105,6 +111,7 @@ pub struct Vmsa {
     dr6: u64,
     rflags: u64,
     rip: u64,
+    #[serde(with = "BigArray")]
     rsvd4: [u8; 88],
     rsp: u64,
     rsvd5: [u8; 24],
@@ -129,6 +136,7 @@ pub struct Vmsa {
     // The following part of the save area is valid only for
     // SEV-ES guests when referenced through the GHCB or for
     // saving to the host save area.
+    #[serde(with = "BigArray")]
     rsvd7: [u8; 72],
     spec_ctrl: u32, /* Guest version of SPEC_CTRL at 0x2E0 */
     rsvd8: [u8; 4],
@@ -155,6 +163,7 @@ pub struct Vmsa {
     sw_exit_info_1: u64,
     sw_exit_info_2: u64,
     sw_scratch: u64,
+    #[serde(with = "BigArray")]
     rsvd13: [u8; 56],
     xcr0: u64,
     valid_bitmap: [u8; 16],

@@ -167,12 +167,17 @@ fn format_vmsa(vmsa: Vmsa) -> String {
     string_list.join("\n")
 }
 
-pub fn cmd(_args: CmdArgs) -> super::Result<()> {
-    let mut vmsa = Vmsa::default();
-    vmsa.init_amd64();
-    vmsa.init_kvm();
+pub fn cmd(args: CmdArgs) -> super::Result<()> {
+    // XXX
+    //let mut vmsa = Vmsa::default();
+    //vmsa.init_amd64();
+    //vmsa.init_kvm();
 
-    println!("{}", format_vmsa(vmsa));
+    // Read file into vector.
+    let data = std::fs::read(args.filename).unwrap();
+    let decoded: Vmsa = bincode::deserialize(&data[..]).unwrap();
+
+    println!("{}", format_vmsa(decoded));
 
     Ok(())
 }
